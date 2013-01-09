@@ -67,7 +67,7 @@ class TestMiniTestMock < MiniTest::Unit::TestCase
   end
 
   def test_mock_args_does_not_raise
-    arg = MiniTest::Mock.new
+    arg = 'I am a string of no importance.'
     mock = MiniTest::Mock.new
     mock.expect(:foo, nil, [arg])
     mock.foo(arg)
