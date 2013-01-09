@@ -657,8 +657,8 @@ class TestMeta < MiniTest::Unit::TestCase
     assert_equal "inner thingy",      y.desc
     assert_equal "very inner thingy", z.desc
 
-    top_methods = %w(setup teardown test_0001_top-level-it)
-    inner_methods1 = %w(setup teardown test_0001_inner-it)
+    top_methods = %w(setup teardown test_0001_top_level_it)
+    inner_methods1 = %w(setup teardown test_0001_inner_it)
     inner_methods2 = inner_methods1 +
       %w(test_0002_anonymous test_0003_anonymous)
 
@@ -693,7 +693,7 @@ class TestMeta < MiniTest::Unit::TestCase
       z = describe "second thingy" do end
     end
 
-    test_methods = [ "test_0001_top_level_it", "test_0002__--&_,_,_,_,_hello!!!_world" ]
+    test_methods = [ "test_0001_top_level_it", "test_0002_hello_world" ]
     assert_equal test_methods, [x1, x2]
     assert_equal test_methods,
       x.instance_methods.grep(/^test/).map {|o| o.to_s}.sort
