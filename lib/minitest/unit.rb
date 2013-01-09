@@ -445,7 +445,7 @@ module MiniTest
         rescue ThreadError => e       # wtf?!? 1.8 + threads == suck
           default += ", not \:#{e.message[/uncaught throw \`(\w+?)\'/, 1]}"
         rescue ArgumentError => e     # 1.9 exception
-          default += ", not #{e.message.split(/ /).last}"
+          default += ", not #{translate_symbol(e.message.split(/ /).last)}"
         rescue NameError => e         # 1.8 exception
           default += ", not #{e.name.inspect}"
         end
@@ -453,6 +453,10 @@ module MiniTest
       end
 
       assert caught, message(msg) { default }
+    end
+
+    def translate_symbol(symbol)
+      ':' + symbol.gsub(/[:`']/, '')
     end
 
     ##
