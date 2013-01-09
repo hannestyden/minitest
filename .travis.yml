@@ -7,4 +7,4 @@ rvm:
   - jruby-19mode # JRuby in 1.9 mode
   - rbx-18mode
   - rbx-19mode
-script: rake test
+script: ruby -w -Ilib -e "Dir['test/**/{test,spec}_*.rb', 'test/**/*_{test,spec}.rb'].uniq.each { |fp| require \"./#{fp}\" }"

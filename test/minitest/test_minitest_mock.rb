@@ -1,5 +1,5 @@
-require 'minitest/mock'
-require 'minitest/unit'
+require './lib/minitest/mock'
+require './lib/minitest/unit'
 
 MiniTest::Unit.autorun
 
@@ -269,7 +269,7 @@ class TestMiniTestMock < MiniTest::Unit::TestCase
   end
 end
 
-require "minitest/metametameta"
+require "./test/minitest/metametameta"
 
 class TestMiniTestStub < MiniTest::Unit::TestCase
   parallelize_me!
