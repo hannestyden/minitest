@@ -312,6 +312,22 @@ class TestMiniTestRunner < MetaMetaMetaTestCase
       2 tests, 1 assertions, 0 failures, 1 errors, 0 skips
     EOM
 
+    if jruby?
+    expected = clean <<-EOM
+      E.
+
+      Finished tests in 0.00
+
+        1) Error:
+      test_error(#<Class:0xXXX>):
+      RuntimeError: unhandled exception
+          FILE:LINE:in `test_error'
+          FILE:LINE:in `__send__'
+
+      2 tests, 1 assertions, 0 failures, 1 errors, 0 skips
+    EOM
+    end
+
     assert_report expected
   end
 
@@ -338,6 +354,24 @@ class TestMiniTestRunner < MetaMetaMetaTestCase
 
       1 tests, 1 assertions, 0 failures, 1 errors, 0 skips
     EOM
+
+    if jruby?
+    expected = clean <<-EOM
+      E
+
+      Finished tests in 0.00
+
+        1) Error:
+      test_something(#<Class:0xXXX>):
+      RuntimeError: unhandled exception
+          FILE:LINE:in `teardown'
+          FILE:LINE:in `__send__'
+          FILE:LINE:in `send'
+
+      1 tests, 1 assertions, 0 failures, 1 errors, 0 skips
+    EOM
+
+    end
 
     assert_report expected
   end
