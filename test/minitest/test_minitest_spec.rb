@@ -693,8 +693,7 @@ class TestMeta < MiniTest::Unit::TestCase
       z = describe "second thingy" do end
     end
 
-    test_methods = ['test_0001_top level it', 'test_0002_не латинские буквы-и-спецсимволы&いった α, β, γ, δ, ε hello!!! world'].sort
-
+    test_methods = [ "test_0001_top_level_it", "test_0002__--&_,_,_,_,_hello!!!_world" ]
     assert_equal test_methods, [x1, x2]
     assert_equal test_methods,
       x.instance_methods.grep(/^test/).map {|o| o.to_s}.sort

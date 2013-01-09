@@ -187,13 +187,15 @@ class MiniTest::Spec < MiniTest::Unit::TestCase
   # Hint: If you _do_ want inheritence, use minitest/unit. You can mix
   # and match between assertions and expectations as much as you want.
 
+  require 'iconv'
+
   def self.it desc = "anonymous", &block
     block ||= proc { skip "(no tests defined)" }
 
     @specs ||= 0
     @specs += 1
 
-    name = "test_%04d_%s" % [ @specs, desc ]
+    name = "test_%04d_%s" % [ @specs, Iconv.conv('iso-8859-15//translit//ignore', 'utf-8', desc).gsub(/\s+/, '_') ]
 
     define_method name, &block
 
