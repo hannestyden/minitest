@@ -906,21 +906,26 @@ module MiniTest
       filter = options[:filter] || '/./'
       filter = Regexp.new $1 if filter =~ /\/(.*)\//
 
-      assertions = suite.send("#{type}_methods").grep(filter).map { |method|
-        inst = suite.new method
-        inst._assertions = 0
+      suite.setup_all
 
-        print "#{suite}##{method} = " if @verbose
+      assertions =
+        suite.send("#{type}_methods").grep(filter).map do |method|
+          inst = suite.new method
+          inst._assertions = 0
 
-        start_time = Time.now if @verbose
-        result = inst.run self
+          print "#{suite}##{method} = " if @verbose
 
-        print "%.2f s = " % (Time.now - start_time) if @verbose
-        print result
-        puts if @verbose
+          start_time = Time.now if @verbose
+          result = inst.run self
 
-        inst._assertions
-      }
+          print "%.2f s = " % (Time.now - start_time) if @verbose
+          print result
+          puts if @verbose
+
+          inst._assertions
+        end
+
+      suite.teardown_all
 
       return assertions.size, assertions.inject(0) { |sum, n| sum + n }
     end
@@ -1272,6 +1277,16 @@ module MiniTest
                                 Interrupt, SystemExit] # :nodoc:
 
       SUPPORTS_INFO_SIGNAL = Signal.list['INFO'] # :nodoc:
+
+      def self.setup_all
+        puts "Setup #{self}"
+        # noop
+      end
+
+      def self.teardown_all
+        puts "Teardown #{self}"
+        # noop
+      end
 
       ##
       # Runs the tests reporting the status to +runner+
