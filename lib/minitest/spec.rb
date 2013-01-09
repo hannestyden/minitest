@@ -1,6 +1,6 @@
 #!/usr/bin/ruby -w
 
-require 'minitest/unit'
+require './lib/minitest/unit'
 
 class Module # :nodoc:
   def infect_an_assertion meth, new_name, dont_flip = false # :nodoc:

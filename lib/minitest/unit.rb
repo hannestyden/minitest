@@ -1,7 +1,7 @@
 require 'optparse'
 require 'rbconfig'
 require 'thread' # required for 1.8
-require 'minitest/parallel_each'
+require './lib/minitest/parallel_each'
 
 ##
 # Minimal (mostly drop-in) replacement for test-unit.

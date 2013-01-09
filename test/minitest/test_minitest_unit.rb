@@ -1,5 +1,6 @@
 require 'pathname'
-require 'minitest/metametameta'
+require './lib/minitest/unit'
+require './test/minitest/metametameta'
 
 module MyModule; end
 class AnError < StandardError; include MyModule; end

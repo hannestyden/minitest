@@ -1,5 +1,5 @@
-require 'minitest/unit'
-require 'minitest/spec'
+require './lib/minitest/unit'
+require './lib/minitest/spec'
 
 class MiniTest::Unit # :nodoc:
   def run_benchmarks # :nodoc:

@@ -5,8 +5,8 @@ rescue Gem::LoadError
   # do nothing
 end
 
-require 'minitest/unit'
-require 'minitest/spec'
-require 'minitest/mock'
+require './lib/minitest/unit'
+require './lib/minitest/spec'
+require './lib/minitest/mock'
 
 MiniTest::Unit.autorun

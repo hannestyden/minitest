@@ -1,4 +1,4 @@
-require "minitest/unit"
+require "./lib/minitest/unit"
 
 ##
 # Show your testing pride!
