@@ -1,14 +1,21 @@
 require 'tempfile'
 require 'stringio'
-require './lib/minitest/autorun'
 
-class MiniTest::Unit::TestCase
-  def clean s
-    s.gsub(/^ {6}/, '')
+module MetaTest
+  class Unit < MiniTest::Unit
+    MiniTest::Unit::TestCase.dont_track do
+      class TestCase < MiniTest::Unit::TestCase
+        def clean s
+          s.gsub(/^ {6}/, '')
+        end
+      end
+    end
+
+    test_case_class TestCase
   end
 end
 
-class MetaMetaMetaTestCase < MiniTest::Unit::TestCase
+class MetaMetaMetaTestCase < MetaTest::Unit::TestCase
   def assert_report expected, flags = %w[--seed 42]
     header = clean <<-EOM
       Run options: #{flags.map { |s| s =~ /\|/ ? s.inspect : s }.join " "}
@@ -65,3 +72,5 @@ class MetaMetaMetaTestCase < MiniTest::Unit::TestCase
     end
   end
 end
+
+MetaTest::Unit.autorun

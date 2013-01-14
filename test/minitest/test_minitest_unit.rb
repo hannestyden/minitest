@@ -672,7 +672,7 @@ class TestMiniTestUnitOrder < MetaMetaMetaTestCase
   end
 end
 
-class TestMiniTestUnitTestCase < MiniTest::Unit::TestCase
+class TestMiniTestUnitTestCase < MetaMetaMetaTestCase
   # do not call parallelize_me! - teardown accesses @tc._assertions
   # which is not threadsafe. Nearly every method in here is an
   # assertion test so it isn't worth splitting it out further.
@@ -1720,7 +1720,7 @@ class TestMiniTestUnitTestCase < MiniTest::Unit::TestCase
   end
 end
 
-class TestMiniTestGuard < MiniTest::Unit::TestCase
+class TestMiniTestGuard < MetaMetaMetaTestCase
   parallelize_me!
 
   def test_mri_eh

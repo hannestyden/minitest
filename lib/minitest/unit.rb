@@ -783,7 +783,7 @@ module MiniTest
           exit false if exit_code && exit_code != 0
         }
 
-        exit_code = MiniTest::Unit.new.run ARGV
+        exit_code = new.run ARGV
       } unless @@installed_at_exit
       @@installed_at_exit = true
     end
@@ -844,11 +844,20 @@ module MiniTest
       output.print(*a)
     end
 
+    def test_case_class
+      self.class.test_case_class
+    end
+
+    def self.test_case_class(v = nil)
+      @test_case_class ||= v if v
+      @test_case_class
+    end
+
     ##
     # Runner for a given +type+ (eg, test vs bench).
 
     def _run_anything type
-      suites = TestCase.send "#{type}_suites"
+      suites = test_case_class.send "#{type}_suites"
       return if suites.empty?
 
       start = Time.now
@@ -890,7 +899,9 @@ module MiniTest
     # serial.
 
     def _run_suites suites, type
-      parallel, serial = suites.partition { |s| s.test_order == :parallel }
+      # parallel, serial = suites.partition { |s| s.test_order == :parallel }
+      parallel = []
+      serial = suites
 
       ParallelEach.new(parallel).map { |suite| _run_suite suite, type } +
         serial.map { |suite| _run_suite suite, type }
@@ -908,7 +919,7 @@ module MiniTest
 
       suite.setup_all
 
-      assertions =
+      test_assertion_counts =
         suite.send("#{type}_methods").grep(filter).map do |method|
           inst = suite.new method
           inst._assertions = 0
@@ -925,9 +936,16 @@ module MiniTest
           inst._assertions
         end
 
+      m = []
+      suite.descendants.each do |d|
+         m << _run_suite(d, type)
+      end
+
+      m = m.inject([ 0, 0 ]) { |a, b| [ a.first + b.first, a.last + b.last ] }
+
       suite.teardown_all
 
-      return assertions.size, assertions.inject(0) { |sum, n| sum + n }
+      return m.first.to_i + test_assertion_counts.size, m.last.to_i + test_assertion_counts.inject(0) { |sum, n| sum + n }
     end
 
     ##
@@ -1278,16 +1296,6 @@ module MiniTest
 
       SUPPORTS_INFO_SIGNAL = Signal.list['INFO'] # :nodoc:
 
-      def self.setup_all
-        puts "Setup #{self}"
-        # noop
-      end
-
-      def self.teardown_all
-        puts "Teardown #{self}"
-        # noop
-      end
-
       ##
       # Runs the tests reporting the status to +runner+
 
@@ -1410,10 +1418,22 @@ module MiniTest
         end
       end
 
-      def self.inherited klass # :nodoc:
-        @@test_suites[klass] = true
-        klass.reset_setup_teardown_hooks
+      def self.inherited(descendant) # :nodoc:
+        @@test_suites[descendant] = true
+        descendants << descendant unless @dont_track
+        descendant.reset_setup_teardown_hooks
+        descendant.reset_setup_teardown_alls
         super
+      end
+
+      def self.dont_track
+        @dont_track = true
+        yield
+        @dont_track = false
+      end
+
+      def self.descendants
+        @descendants ||= []
       end
 
       def self.test_order # :nodoc:
@@ -1421,7 +1441,8 @@ module MiniTest
       end
 
       def self.test_suites # :nodoc:
-        @@test_suites.keys.sort_by { |ts| ts.name.to_s }
+        # @@test_suites.keys.sort_by { |ts| ts.name.to_s }
+        [ self ]
       end
 
       def self.test_methods # :nodoc:
@@ -1465,11 +1486,22 @@ module MiniTest
         @setup_hooks = []
         @teardown_hooks = []
       end
-
       reset_setup_teardown_hooks
+
+      def self.reset_setup_teardown_alls
+        self_class = (class << self; self; end)
+        self_class.send(:define_method, :setup_all) do
+          # noop
+        end
+        self_class.send(:define_method, :teardown_all) do
+          # noop
+        end
+      end
+      reset_setup_teardown_alls
 
       include MiniTest::Assertions
     end # class TestCase
+    test_case_class TestCase
   end # class Unit
 end # module MiniTest
 
